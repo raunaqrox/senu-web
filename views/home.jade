@@ -1,0 +1,8 @@
+extends index_home
+block content
+	#container.container-fluid
+		.row.col-md-offset-5
+			form(action="/session", method="post", class="col-md-3")
+				input(type="text", class="form-control", name="username", placeholder="name")
+				input(type="password", class="form-control", name="password", placeholder="password")
+				input(type="submit", class="btn btn-danger col-md-offset-5" ,value="Go", class="button-primary")

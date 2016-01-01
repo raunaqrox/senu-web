@@ -1,0 +1,13 @@
+extends index_group
+block content
+	h1 Public Groups
+	//Add captcha to create group
+	#createGroup
+		form(method="post",action="/createGroup")
+			label Create public group : 
+				input(id="userName", name="username", autocomplete='off', placeholder='username', autofocus, required)
+				input(id="groupName", name="group", autocomplete='off', placeholder='group name', required)
+				input(id="send", type="submit", class="button-primary",value="Create & Join")
+	#publicGroup
+		button(id="getGroup", class="button-primary") Get Public Groups
+		ul(id="groupList")
