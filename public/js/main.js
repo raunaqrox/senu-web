@@ -56,23 +56,20 @@ $(document).ready(function(){
 	
 	init();
 
-	socket.on("connection", function(data){
-		
-	});
 
-	socket.on("id", function(id){
-		myId = id;
-		console.log("got id " + myId);
-		socket.emit("gotId");
-	});
-
-	socket.on("joint", function(){
+	socket.on("connect", function(){
 		disconnected = false;
 		console.log("joint");
 		$('#status').text("Connected");
 		myId = $('#myId').text();
 		socket.emit("gotId", myId);
 		setStatus("Joint");
+	});
+
+	socket.on("id", function(id){
+		myId = id;
+		console.log("got id " + myId);
+		socket.emit("gotId");
 	});
 
 	socket.on("bothConnected", function(){

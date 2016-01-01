@@ -63,6 +63,7 @@ client.on('error', function(err){
  *
 ==========================*/
 
+
 app.get('/',index.home);
 
 app.post('/session', function(req, res){
@@ -71,24 +72,23 @@ app.post('/session', function(req, res){
     var myId = uuid.v1();
     req.session.username = username;
     req.session.myId = myId;
+    client.set(username, pass);
+    client.set(username+ ":" + pass, myId);
     client.set(myId, JSON.stringify(new User(username, pass, myId)));
-    client.get(myId, function(err, reply){
-        if(err) console.error("Redis err "+err);
-        if(reply)
-            console.log(reply);
-        else
-            console.log("Key not found")
-        
-        res.render('session', {
-            id: myId
-        });
+    res.render('session', {
+        id: myId
     });
 });
 
 app.get('/session',function(req,res){
     if(req.session.myId && req.session.username){
-        res.render('session',{
-            id: req.session.myId
+        client.get(req.session.myId, function(err, reply){
+            if(err) console.error(err);
+            if(reply){
+                res.render('session',{
+                    id: req.session.myId
+                });
+            }
         });
     }else{
         res.redirect('/');
@@ -128,6 +128,26 @@ function changeRoomCount(id, amt, cb){
 
 io.on('connection', function(socket){
     socket.emit("joint");
+    socket.on("auth", function(id){
+        client.get(username, function(err, reply){
+            if(err) console.error(err);
+            else{
+                if(reply == pass){
+                    if(req.body.mobile){
+                        client.get(username + ":" + pass, function(err, reply){
+                            if(reply){
+                                res.send(reply);
+                            }
+                        });
+                    }else{
+                        res.send("e");
+                    }
+                }else{
+                    res.send("e");
+                }
+            }
+        });
+    });
     socket.on("gotId", function(id){
         socket.id = id;
         changeRoomCount(id, 1, function(userObj){
