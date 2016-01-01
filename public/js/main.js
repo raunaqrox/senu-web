@@ -37,15 +37,20 @@ $(document).ready(function(){
 	}
 
 	function OpenInNewTab(url) {
+		var win;
 		try{
-			var win = window.open(url, '_blank');
+			win = window.open(url, '_blank');
 			win.focus();
+			
 		}catch(e){
 			console.log("did not open");
 			$('#openUrl').attr("onClick","window.open('"+url+"','_blank');")
 			$('#openUrl').click(function(){
 				console.log("this is called");
 			});
+			if(!win || win.closed || typeof win.closed=='undefined') { 
+			    alert("Please allow in popup blocker or Change browser to Chrome");
+			}
 		}
 	}
 	
