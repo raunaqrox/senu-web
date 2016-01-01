@@ -72,7 +72,6 @@ app.post('/session', function(req, res){
     var myId = uuid.v1();
     req.session.username = username;
     req.session.myId = myId;
-    client.set(username, pass);
     client.set(username+ ":" + pass, myId);
     client.set(myId, JSON.stringify(new User(username, pass, myId)));
     res.render('session', {
@@ -127,25 +126,15 @@ function changeRoomCount(id, amt, cb){
 
 
 io.on('connection', function(socket){
-    socket.emit("joint");
     socket.on("auth", function(id){
-        client.get(username, function(err, reply){
-            if(err) console.error(err);
-            else{
-                if(reply == pass){
-                    if(req.body.mobile){
-                        client.get(username + ":" + pass, function(err, reply){
-                            if(reply){
-                                res.send(reply);
-                            }
-                        });
-                    }else{
-                        res.send("e");
-                    }
-                }else{
-                    res.send("e");
-                }
+        client.get(username + ":" + pass, function(err, reply){
+            if(reply){
+                socket.emit("auth", reply);
+            }else{
+                socket.emit("error", "Authentication");
             }
+        });
+
         });
     });
     socket.on("gotId", function(id){
@@ -159,7 +148,8 @@ io.on('connection', function(socket){
         changeRoomCount(socket.id, -1, function(userObj){
             if(userObj.roomCount === 0){
                 socket.emit("roomDestroyed");
-                client.del(socket.id)
+                client.del(socket.id);
+                // remove the key with user:pass
             }
         });
     });

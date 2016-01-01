@@ -73,7 +73,7 @@ $(document).ready(function(){
 	});
 
 	socket.on("bothConnected", function(){
-
+		alert("both connected");
 	});
 
 	socket.on("openUrl", function(url){		
