@@ -133,7 +133,6 @@ io.on('connection', function(socket){
         changeRoomCount(id, 1, function(userObj){
             if(userObj.roomCount === 2)
                 socket.emit("bothConnected");
-            socket.emit("openUrl", "http://google.com");
         });
     });
     socket.on("disconnect", function(){
@@ -142,10 +141,10 @@ io.on('connection', function(socket){
                 socket.emit("roomDestroyed");
                 client.del(socket.id)
             }
-
         });
     });
 });
+
 
 /*==========================
  *
