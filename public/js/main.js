@@ -37,16 +37,16 @@ $(document).ready(function(){
 	}
 
 	function OpenInNewTab(url) {
-		var win = window.open(url, '_blank');
-		win.focus();
-		if(!win){
+		try{
+			var win = window.open(url, '_blank');
+			win.focus();
+		}catch(e){
 			console.log("did not open");
 			$('#openUrl').attr("onClick","window.open('"+url+"','_blank');")
-			$('#openUrl').click();
-		}else{
-			win.focus();
+			$('#openUrl').click(function(){
+				console.log("this is called");
+			});
 		}
-		
 	}
 	
 	init();
