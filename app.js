@@ -110,7 +110,8 @@ function changeRoomCount(id, amt, cb){
                 userObj = JSON.parse(reply);
                 userObj.roomCount += amt;
                 client.set(id, JSON.stringify(userObj));
-                cb(userObj);
+                if(cb)
+                    cb(userObj);
             }
         }
     });
@@ -126,23 +127,19 @@ function changeRoomCount(id, amt, cb){
 
 
 io.on('connection', function(socket){
-    socket.on("auth", function(id){
-        client.get(username + ":" + pass, function(err, reply){
+    socket.on("auth", function(auth){
+        client.get(auth, function(err, reply){
             if(reply){
                 socket.emit("auth", reply);
+                socket.emit("bothConnected");
             }else{
                 socket.emit("error", "Authentication");
             }
         });
-
-        });
     });
     socket.on("gotId", function(id){
         socket.id = id;
-        changeRoomCount(id, 1, function(userObj){
-            if(userObj.roomCount === 2)
-                socket.emit("bothConnected");
-        });
+        changeRoomCount(id, 1);
     });
     socket.on("disconnect", function(){
         changeRoomCount(socket.id, -1, function(userObj){
